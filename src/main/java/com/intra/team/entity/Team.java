@@ -2,21 +2,23 @@ package com.intra.team.entity;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document("projects")
+@Document("teams")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Project {
+public class Team {
 
     @Id
     private String id;
 
-    @Indexed(unique = true)
     private String name;
-    private String description;
+    private String type; // frontend/backend/devops
+
+    private String projectId;
+    private String projectName;
+
     private String createdBy;
 }
