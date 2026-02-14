@@ -4,6 +4,8 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 @Document("teams")
 @Data
 @NoArgsConstructor
@@ -21,4 +23,5 @@ public class Team {
     private String projectName;
 
     private String createdBy;
+    private List<String> userEmails;   // or userIds
 }

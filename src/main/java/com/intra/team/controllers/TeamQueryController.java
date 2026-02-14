@@ -2,6 +2,7 @@ package com.intra.team.controllers;
 
 import com.intra.team.dto.ProjectTeamsDTO;
 import com.intra.team.dto.TeamSummaryResponse;
+import com.intra.team.dto.TeamUsersResponse;
 import com.intra.team.service.TeamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,5 +26,15 @@ public class TeamQueryController {
             @RequestParam String name) {
 
         return teamService.getTeamsByProjectName(name);
+    }
+
+    @GetMapping("/users")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    public TeamUsersResponse getUsers(
+            @RequestParam String project,
+            @RequestParam String team,
+            @RequestParam String type) {
+
+        return teamService.getUsersByTeam(project, team, type);
     }
 }

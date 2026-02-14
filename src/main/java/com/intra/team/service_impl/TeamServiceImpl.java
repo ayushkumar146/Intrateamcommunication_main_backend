@@ -1,9 +1,7 @@
 package com.intra.team.service_impl;
 
 
-import com.intra.team.dto.ProjectTeamsDTO;
-import com.intra.team.dto.TeamCreateRequest;
-import com.intra.team.dto.TeamSummaryResponse;
+import com.intra.team.dto.*;
 import com.intra.team.entity.Project;
 import com.intra.team.entity.Team;
 import com.intra.team.repository.ProjectRepository;
@@ -13,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 //import java.util.List;
@@ -60,6 +59,68 @@ public class  TeamServiceImpl implements TeamService {
                         .toList();
 
         return new ProjectTeamsDTO(project.getName(), teams);
+    }
+    @Override
+    public Team addUsersToTeam(AddUsersToTeamRequest req) {
+
+        // find project by name
+        Project project = projectRepository.findByName(req.getProjectName())
+                .orElseThrow(() ->
+                        new RuntimeException("Project not found"));
+
+        // find team inside project
+        Team team = teamRepository
+                .findByProjectIdAndNameAndType(
+                        project.getId(),
+                        req.getTeamName(),
+                        req.getTeamType())
+                .orElseThrow(() ->
+                        new RuntimeException("Team not found"));
+
+        // init list if null
+        if (team.getUserEmails() == null) {
+            team.setUserEmails(new ArrayList<>());
+        }
+
+        // avoid duplicates
+        for (String email : req.getUserEmails()) {
+            if (!team.getUserEmails().contains(email)) {
+                team.getUserEmails().add(email);
+            }
+        }
+
+        return teamRepository.save(team);
+    }
+
+    @Override
+    public TeamUsersResponse getUsersByTeam(
+            String projectName,
+            String teamName,
+            String teamType) {
+
+        // case-sensitive — exact match
+        Project project = projectRepository.findByName(projectName)
+                .orElseThrow(() ->
+                        new RuntimeException("Project not found"));
+
+        Team team = teamRepository
+                .findByProjectIdAndNameAndType(
+                        project.getId(),
+                        teamName,
+                        teamType)
+                .orElseThrow(() ->
+                        new RuntimeException("Team not found"));
+
+        List<String> users = team.getUserEmails() == null
+                ? List.of()
+                : team.getUserEmails();
+
+        return new TeamUsersResponse(
+                projectName,
+                teamName,
+                teamType,
+                users
+        );
     }
 }
 

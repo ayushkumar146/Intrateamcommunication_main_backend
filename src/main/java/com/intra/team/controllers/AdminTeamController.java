@@ -1,4 +1,5 @@
 package com.intra.team.controllers;
+import com.intra.team.dto.AddUsersToTeamRequest;
 import com.intra.team.dto.TeamCreateRequest;
 import com.intra.team.dto.TeamSummaryResponse;
 import com.intra.team.entity.Team;
@@ -32,6 +33,11 @@ public class AdminTeamController {
         return ResponseEntity.ok(team);
     }
 
+    @PostMapping("/add-users")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Team addUsers(@RequestBody AddUsersToTeamRequest req) {
+        return teamService.addUsersToTeam(req);
 
+    }
 }
 
