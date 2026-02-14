@@ -3,6 +3,8 @@ package com.intra.team.service_impl;
 import com.intra.team.dto.ChecklistRequest;
 import com.intra.team.entity.Project;
 import com.intra.team.entity.TeamChecklist;
+import com.intra.team.exceptions.ProjectAlreadyExistsException;
+import com.intra.team.exceptions.ResourceNotFoundException;
 import com.intra.team.repository.ProjectRepository;
 import com.intra.team.repository.TeamChecklistRepository;
 import com.intra.team.service.ChecklistService;
@@ -23,7 +25,7 @@ public class ChecklistServiceImpl implements ChecklistService {
     public TeamChecklist createChecklist(ChecklistRequest req) {
 
         Project project = projectRepo.findByName(req.getProjectName())
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
 
         List<ChecklistItem> items =
                 req.getPoints().stream()
@@ -48,13 +50,13 @@ public class ChecklistServiceImpl implements ChecklistService {
             String type) {
 
         Project project = projectRepo.findByName(projectName)
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
 
         return repo.findByProjectIdAndTeamNameAndTeamType(
                         project.getId(),
                         team,
                         type)
-                .orElseThrow(() -> new RuntimeException("Checklist not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Checklist not found"));
     }
 
     @Override
@@ -64,7 +66,7 @@ public class ChecklistServiceImpl implements ChecklistService {
             boolean status) {
 
         TeamChecklist c = repo.findById(checklistId)
-                .orElseThrow(() -> new RuntimeException("Checklist not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Checklist not found"));
 
         c.getItems().get(index).setCompleted(status);
 

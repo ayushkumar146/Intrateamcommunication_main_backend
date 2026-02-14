@@ -2,6 +2,7 @@ package com.intra.team.service_impl;
 
 import com.intra.team.dto.CreateProjectRequest;
 import com.intra.team.entity.Project;
+import com.intra.team.exceptions.ProjectAlreadyExistsException;
 import com.intra.team.repository.ProjectRepository;
 import com.intra.team.service.ProjectService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ public class ProjectServiceImpl implements ProjectService {
     public Project createProject(CreateProjectRequest req,
                                  String createdBy) {
         if (repo.existsByName(req.getName())) {
-            throw new RuntimeException("Project already exists with this name");
+            throw new ProjectAlreadyExistsException("Project already exists with this name");
         }
         Project p = Project.builder()
                 .name(req.getName())

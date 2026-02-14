@@ -4,6 +4,8 @@ package com.intra.team.service_impl;
 import com.intra.team.dto.*;
 import com.intra.team.entity.Project;
 import com.intra.team.entity.Team;
+import com.intra.team.exceptions.ProjectAlreadyExistsException;
+import com.intra.team.exceptions.ResourceNotFoundException;
 import com.intra.team.repository.ProjectRepository;
 import com.intra.team.repository.TeamRepository;
 import com.intra.team.service.TeamService;
@@ -28,7 +30,7 @@ public class  TeamServiceImpl implements TeamService {
 
         Project project = projectRepository
                 .findByName(request.getProjectName())
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
 
         Team team = new Team();
         team.setName(request.getTeamName());
@@ -48,7 +50,7 @@ public class  TeamServiceImpl implements TeamService {
         Project project = projectRepository
                 .findByName(projectName)
                 .orElseThrow(() ->
-                        new RuntimeException("Project not found"));
+                        new ResourceNotFoundException("Project not found"));
 
         List<TeamSummaryResponse> teams =
                 teamRepository.findByProjectId(project.getId())
@@ -66,7 +68,7 @@ public class  TeamServiceImpl implements TeamService {
         // find project by name
         Project project = projectRepository.findByName(req.getProjectName())
                 .orElseThrow(() ->
-                        new RuntimeException("Project not found"));
+                        new ResourceNotFoundException("Project not found"));
 
         // find team inside project
         Team team = teamRepository
@@ -75,7 +77,7 @@ public class  TeamServiceImpl implements TeamService {
                         req.getTeamName(),
                         req.getTeamType())
                 .orElseThrow(() ->
-                        new RuntimeException("Team not found"));
+                        new ResourceNotFoundException("Team not found"));
 
         // init list if null
         if (team.getUserEmails() == null) {
@@ -101,7 +103,7 @@ public class  TeamServiceImpl implements TeamService {
         // case-sensitive — exact match
         Project project = projectRepository.findByName(projectName)
                 .orElseThrow(() ->
-                        new RuntimeException("Project not found"));
+                        new ResourceNotFoundException("Project not found"));
 
         Team team = teamRepository
                 .findByProjectIdAndNameAndType(
@@ -109,7 +111,7 @@ public class  TeamServiceImpl implements TeamService {
                         teamName,
                         teamType)
                 .orElseThrow(() ->
-                        new RuntimeException("Team not found"));
+                        new ResourceNotFoundException("Team not found"));
 
         List<String> users = team.getUserEmails() == null
                 ? List.of()
